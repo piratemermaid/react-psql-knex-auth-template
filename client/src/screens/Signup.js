@@ -35,13 +35,13 @@ const Signup = () => {
       <h1>Signup</h1>
       <form onSubmit={submitForm}>
         <div>
-          <input type="text" {...bindUsername} />
+          <input type="text" placeholder="Username" {...bindUsername} />
         </div>
         <div>
-          <input type="email" {...bindEmail} />
+          <input type="email" placeholder="Email" {...bindEmail} />
         </div>
         <div>
-          <input type="password" {...bindPassword} />
+          <input type="password" placeholder="Password" {...bindPassword} />
         </div>
         {errorMessage ? errorMessage : null}
         <button type="submit" onSubmit={submitForm}>
