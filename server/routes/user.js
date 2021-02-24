@@ -4,24 +4,8 @@ const { Session } = require("../models/session");
 
 const router = new Router();
 
-router.get("/authenticated", async (req, res) => {
-  const { sessionString } = req.cookies;
-
-  const verified = await Session.verify(sessionString);
-  if (!sessionString || !verified) {
-    res.send(false);
-    return;
-  } else {
-    const { username, id } = Session.parse(sessionString);
-
-    const user = await Account.getAccount({ username });
-
-    if (!user) {
-      res.send(false);
-    } else {
-      res.send(true);
-    }
-  }
+router.get("/", async (req, res) => {
+  res.send("user route");
 });
 
 module.exports = router;

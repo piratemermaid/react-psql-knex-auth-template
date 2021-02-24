@@ -7,7 +7,7 @@ const Header = () => {
 
   useEffect(() => {
     const checkAuth = async () => {
-      const res = await axios.get("/user/authenticated");
+      const res = await axios.get("/account/authenticated");
       if (res.data === true) {
         setAuthenticated(true);
       }

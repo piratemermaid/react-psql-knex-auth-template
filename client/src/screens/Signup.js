@@ -1,15 +1,33 @@
-import React from "react";
+import { useState } from "react";
+import axios from "axios";
 import useInput from "../hooks/useInput";
 
 const Signup = () => {
+  const [errorMessage, setErrorMessage] = useState(null);
   const { value: username, bind: bindUsername } = useInput("");
   const { value: email, bind: bindEmail } = useInput("");
   const { value: password, bind: bindPassword } = useInput("");
 
-  const submitForm = (e) => {
+  const submitForm = async (e) => {
     e.preventDefault();
 
-    console.log("sign up", username, email, password);
+    try {
+      const { data } = await axios.post(
+        "/account/send_verification_on_signup",
+        {
+          username,
+          email,
+          password,
+        }
+      );
+      if (data.errorMessage) {
+        setErrorMessage(data.errorMessage);
+      } else {
+        // TODO: handle successful signup
+      }
+    } catch (err) {
+      console.log(err);
+    }
   };
 
   return (
@@ -25,6 +43,7 @@ const Signup = () => {
         <div>
           <input type="password" {...bindPassword} />
         </div>
+        {errorMessage ? errorMessage : null}
         <button type="submit" onSubmit={submitForm}>
           Sign Up
         </button>
