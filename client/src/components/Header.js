@@ -1,19 +1,32 @@
-import React, { useEffect } from "react";
+import React, { useState, useEffect } from "react";
 import axios from "axios";
 import { Link } from "react-router-dom";
 
-const Header = (props) => {
+const Header = () => {
+  const [authenticated, setAuthenticated] = useState(false);
+
   useEffect(() => {
     const checkAuth = async () => {
       const res = await axios.get("/user/authenticated");
-      console.log(res.data);
+      if (res.data === true) {
+        setAuthenticated(true);
+      }
     };
     checkAuth();
   }, []);
 
+  const signOut = () => {
+    alert("sign out");
+  };
+
   return (
     <nav>
-      <Link to="/">Home</Link> | <Link to="/page">Page</Link>
+      {authenticated ? (
+        <a onClick={signOut}>Sign Out</a>
+      ) : (
+        <Link to="/login">Log In</Link>
+      )}{" "}
+      | <Link to="/">Home</Link> | <Link to="/page">Page</Link>
     </nav>
   );
 };
