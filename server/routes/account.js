@@ -3,31 +3,51 @@ const crypto = require("crypto");
 const moment = require("moment");
 
 const { Account } = require("../models/account");
-const { Session } = require("../models/session");
 
 const router = new Router();
 
-router.get("/authenticated", async (req, res) => {
-  const { sessionString } = req.cookies;
+// router.get("/authenticated", async (req, res) => {
+//   const { username } = Session.parse(sessionString);
 
-  const verified = await Session.verify(sessionString);
-  if (!sessionString || !verified) {
-    res.send(false);
-    return;
-  } else {
-    const { username, id } = Session.parse(sessionString);
+//   const user = await Account.getAccount({ username });
 
-    const user = await Account.getAccount({ username });
+//   if (!user) {
+//     res.send(false);
+//   } else {
+//     res.send(true);
+//   }
+// });
 
-    if (!user) {
-      res.send(false);
-    } else {
-      res.send(true);
+router.post("/login", async (req, res, next) => {
+  const { username, password } = req.body;
+
+  const errorMessage = "Incorrect username/password";
+  try {
+    let account = await Account.getAccount({ username });
+    if (!account) {
+      account = await Account.getAccountByEmail({ email: username });
     }
+    if (!account) {
+      res.send({ errorMessage });
+      return;
+    }
+
+    const correctPw = await Account.comparePassword({
+      password,
+      hashedPassword: account.password
+    });
+    if (!correctPw) {
+      res.send({ errorMessage });
+      return;
+    } else {
+      res.send({ message: "success" });
+    }
+  } catch (err) {
+    console.log(err);
   }
 });
 
-router.post("/send_verification_on_signup", async function (req, res, next) {
+router.post("/signup", async function (req, res, next) {
   const { username, email, password } = req.body;
 
   let account = await Account.getAccount({ username });
@@ -35,15 +55,10 @@ router.post("/send_verification_on_signup", async function (req, res, next) {
     account = await Account.getAccountByEmail({ email });
   }
   if (!account) {
-    // TODO: use generated token
-    const token = crypto.randomBytes(6).toString("hex");
-    const tokenExpiry = moment().add(2, "hours").utc().toISOString();
     await Account.insertAccount({
       username,
       password,
-      email,
-      verify_email_token: "123456",
-      verify_email_expiry: tokenExpiry,
+      email
     });
   } else {
     res.send({ errorMessage: "This username or email has already been taken" });

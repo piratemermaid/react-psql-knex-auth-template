@@ -5,22 +5,20 @@ import useInput from "../hooks/useInput";
 const Signup = () => {
   const [errorMessage, setErrorMessage] = useState(null);
   const { value: username, bind: bindUsername } = useInput("");
-  const { value: email, bind: bindEmail } = useInput("");
   const { value: password, bind: bindPassword } = useInput("");
 
   const submitForm = async (e) => {
     e.preventDefault();
 
     try {
-      const { data } = await axios.post("/account/signup", {
+      const { data } = await axios.post("/account/login", {
         username,
-        email,
         password
       });
       if (data.errorMessage) {
         setErrorMessage(data.errorMessage);
       } else {
-        // TODO: handle successful signup
+        // TODO: handle successful login
       }
     } catch (err) {
       console.log(err);
@@ -29,20 +27,17 @@ const Signup = () => {
 
   return (
     <div>
-      <h1>Signup</h1>
+      <h1>Login</h1>
       <form onSubmit={submitForm}>
         <div>
-          <input type="text" placeholder="Username" {...bindUsername} />
+          <input type="text" {...bindUsername} />
         </div>
         <div>
-          <input type="email" placeholder="Email" {...bindEmail} />
-        </div>
-        <div>
-          <input type="password" placeholder="Password" {...bindPassword} />
+          <input type="password" {...bindPassword} />
         </div>
         {errorMessage ? errorMessage : null}
         <button type="submit" onSubmit={submitForm}>
-          Sign Up
+          Log In
         </button>
       </form>
     </div>

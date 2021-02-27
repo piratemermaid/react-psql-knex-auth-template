@@ -2,21 +2,13 @@ const bcrypt = require("bcrypt");
 const { knex } = require("../db/config/config");
 
 class Account {
-  static insertAccount = async ({
-    username,
-    password,
-    email,
-    verify_email_token,
-    verify_email_expiry,
-  }) => {
+  static insertAccount = async ({ username, password, email }) => {
     bcrypt.hash(password, 10, async function (err, hash) {
       try {
         const user = await knex("users").insert({
           username,
           password: hash,
-          email,
-          verify_email_token,
-          verify_email_expiry,
+          email
         });
         return user;
       } catch (err) {
@@ -40,6 +32,15 @@ class Account {
     try {
       const user = await knex("users").where("email", "ilike", email).first();
       return user;
+    } catch (err) {
+      console.log(err);
+    }
+  };
+
+  static comparePassword = async ({ password, hashedPassword }) => {
+    try {
+      const compared = await bcrypt.compare(password, hashedPassword);
+      return compared;
     } catch (err) {
       console.log(err);
     }

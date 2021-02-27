@@ -4,12 +4,6 @@ exports.up = async function (knex) {
     table.string("username").unique().notNullable();
     table.string("password").notNullable();
     table.string("email").unique().notNullable();
-    table.string("sessionId");
-    table.string("verify_email_token");
-    table.timestamp("verify_email_expiry");
-    table.boolean("verified");
-    table.string("reset_pw_token");
-    table.timestamp("reset_pw_expiry");
   });
 };
 
